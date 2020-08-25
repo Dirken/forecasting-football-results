@@ -4,7 +4,7 @@ matchData <- dbGetQuery(con,"SELECT *
                         FROM Match
                         JOIN Country on Country.id = Match.country_id
                         JOIN League on League.id = Match.league_id")
-removeCols <- c("goal","shoton","shotoff","foulcommit","card", "corner" 
+removeCols <- c("goal","shoton","shotoff","foulcommit","card", "corner",
                 "cross", "possession", "id..118" ,"id..116", "country_id..119", "country_id",
                 "name", "id", "country_id", "league_id")
 
