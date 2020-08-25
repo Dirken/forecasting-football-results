@@ -3,58 +3,68 @@
 #######################
 readRDS(file = "odds.rds")
 
-results <- cbind(matchData[1:11], B365,
-                 matchData[12:14], BW,
-                 matchData[15:17], IW,
-                 matchData[18:20], LB,
-                 matchData[21:23], PS,
-                 matchData[24:26], WH,
-                 matchData[27:29], SJ,
-                 matchData[30:32], VC,
-                 matchData[33:35], GB,
-                 matchData[36:38], BS,
-                 matchData[40])
+missingsAway <- data.frame(season = matchData$season,
+                      stage = matchData$stage,
+                      date = matchData$date,
+                      match_api_id = matchData$match_api_id,
+                      home_team_api_id = matchData$home_team_api_id,
+                      away_team_api_id = matchData$away_team_api_id,
+                      home_team_goal = matchData$home_team_goal,
+                      away_team_goal = matchData$away_team_goal,
+                      B365A = matchData$B365A,
+                      BWA = matchData$BWA,
+                      IWA = matchData$IWA,
+                      LBA = matchData$LBA,
+                      PSA = matchData$PSA,
+                      WHA = matchData$WHA,
+                      SJA = matchData$SJA,
+                      VCA = matchData$VCA,
+                      GBA = matchData$GBA,
+                      BSA = matchData$BSA,
+                      winner = matchData$winner)
 
-missingsHome <-   cbind(matchData[1:9], 
-                    matchData[12], 
-                    matchData[15], 
-                    matchData[18], 
-                    matchData[21], 
-                    matchData[24], 
-                    matchData[27], 
-                    matchData[30], 
-                    matchData[33],
-                    matchData[36],
-                    matchData[40])
+missingsDraw <-   data.frame(season = matchData$season,
+                             stage = matchData$stage,
+                             date = matchData$date,
+                             match_api_id = matchData$match_api_id,
+                             home_team_api_id = matchData$home_team_api_id,
+                             away_team_api_id = matchData$away_team_api_id,
+                             home_team_goal = matchData$home_team_goal,
+                             away_team_goal = matchData$away_team_goal,
+                             B365D = matchData$B365D,
+                             BWD = matchData$BWD,
+                             IWD = matchData$IWD,
+                             LBD = matchData$LBD,
+                             PSD = matchData$PSD,
+                             WHD = matchData$WHD,
+                             SJD = matchData$SJD,
+                             VCD = matchData$VCD,
+                             GBD = matchData$GBD,
+                             BSD = matchData$BSD,
+                             winner = matchData$winner)
 
-missingsDraw <-   cbind(matchData[1:7],
-                        matchData[10],
-                        matchData[13], 
-                        matchData[16], 
-                        matchData[19], 
-                        matchData[22], 
-                        matchData[25], 
-                        matchData[28], 
-                        matchData[31], 
-                        matchData[34],
-                        matchData[37],
-                        matchData[40])
-
-missingsAway <-    cbind(matchData[1:7],
-                         matchData[11],
-                         matchData[14], 
-                         matchData[17], 
-                         matchData[20], 
-                         matchData[23], 
-                         matchData[26], 
-                         matchData[29], 
-                         matchData[32], 
-                         matchData[35],
-                         matchData[38],
-                         matchData[40])
+missingsHome <-    data.frame(season = matchData$season,
+                              stage = matchData$stage,
+                              date = matchData$date,
+                              match_api_id = matchData$match_api_id,
+                              home_team_api_id = matchData$home_team_api_id,
+                              away_team_api_id = matchData$away_team_api_id,
+                              home_team_goal = matchData$home_team_goal,
+                              away_team_goal = matchData$away_team_goal,
+                              B365H = matchData$B365H,
+                              BWH = matchData$BWH,
+                              IWH = matchData$IWH,
+                              LBH = matchData$LBH,
+                              PSH = matchData$PSH,
+                              WHH = matchData$WHH,
+                              SJH = matchData$SJH,
+                              VCH = matchData$VCH,
+                              GBH = matchData$GBH,
+                              BSH = matchData$BSH,
+                              winner = matchData$winner)
 
 #we can already see that we have missings, how is this for every betting house?
-table(complete.cases(matchData[9:11]))
+table(complete.cases(matchData[10:12]))
 
 
 naniar::gg_miss_var(missingsHome[9:18]) +  labs(x="Betting houses", 
@@ -63,76 +73,34 @@ naniar::gg_miss_var(missingsHome[9:18]) +  labs(x="Betting houses",
 naniar::gg_miss_upset(missingsHome[9:18])
 naniar::gg_miss_upset(missingsHome, nsets = 26)
 missingsTable <- naniar::miss_var_summary(missingsHome)
-missingsTable
-boxplot(missingsHome[9:18]) #we can make it better.
 
 
-#with home
-missingsHome[9:18] %>%
-  pivot_longer(everything(), names_to = "BettingHouses",values_to = "values") %>%
-  ggplot(aes(x = BettingHouses, y = values, fill = BettingHouses, color = BettingHouses))+
-  geom_boxplot(alpha = 0.2) +
-  ggtitle("How do betting odds distributed among brands when the local wins?") +
-  theme(legend.position = "none")
+boxplotLeagues <- function(dataset, title){
+  dataset %>%
+    pivot_longer(everything(), names_to = "BettingHouses",values_to = "values") %>%
+    ggplot(aes(x = BettingHouses, y = values, fill = BettingHouses, color = BettingHouses))+
+    geom_boxplot(alpha = 0.2) +
+    ggtitle(title) +
+    theme(legend.position = "none")
+}
 
-missingsHome[9:18] %>%
-  pivot_longer(everything(), names_to = "BettingHouses",values_to = "values") %>%
-  filter(!is.na(values)) %>%
-  ggplot(aes(x = BettingHouses, y = values, fill = BettingHouses, color = BettingHouses))+
-  geom_boxplot(alpha = 0.2)
+boxplotLeagues(missingsHome[9:18],"How do betting odds distributed among brands when the local wins?")
+boxplotLeagues(missingsDraw[9:18],"How do betting odds distributed among brands when there is a draw?")
+boxplotLeagues(missingsAway[9:18],"How do betting odds distributed among brands when away wins?")
+boxplotLeagues(matchData[9:38],"How do betting odds distributed are distributed across brands?")
 
+boxplotLeaguesFiltered <- function(dataset, filterKeyword){
+  dataset %>%
+    filter(dataset[,ncol(dataset)]=="Home Win") %>%
+    select(everything(), -winner) %>%
+    pivot_longer(everything(), names_to = "var",values_to = "values") %>%
+    ggplot(aes(x = var, y = values, fill = var, color = var))+
+    geom_boxplot(alpha = 0.2)
+}
 
-#draw
-missingsDraw[8:17] %>%
-  pivot_longer(everything(), names_to = "BettingHouses",values_to = "values") %>%
-  ggplot(aes(x = BettingHouses, y = values, fill = BettingHouses, color = BettingHouses))+
-  geom_boxplot(alpha = 0.2) +
-  ggtitle("How do betting odds distributed among brands when there is a draw?") +
-  theme(legend.position = "none")
-
-#away
-missingsAway[8:17] %>%
-  pivot_longer(everything(), names_to = "BettingHouses",values_to = "values") %>%
-  ggplot(aes(x = BettingHouses, y = values, fill = BettingHouses, color = BettingHouses))+
-  geom_boxplot(alpha = 0.2) +
-  ggtitle("How do betting odds distributed among brands when away wins?") +
-  theme(legend.position = "none")
-
-#with all
-matchData[9:38] %>%
-  pivot_longer(everything(), names_to = "BettingHouses",values_to = "values") %>%
-  ggplot(aes(x = BettingHouses, y = values, fill = BettingHouses, color = BettingHouses))+
-  geom_boxplot(alpha = 0.2) +
-  ggtitle("How do betting odds distributed are distributed across brands?") +
-  theme(legend.position = "none")
-
-
-#So in what do the odds differ?
-
-#filtering in the case of win:
-missingsHome[9:19] %>%
-  filter(missingsHome[19]=="Home Win") %>%
-  select(everything(), -winner) %>%
-  pivot_longer(everything(), names_to = "var",values_to = "values") %>%
-  ggplot(aes(x = var, y = values, fill = var, color = var))+
-  geom_boxplot(alpha = 0.2)
-
-#filtering in the case of draw:
-missingsDraw[8:18] %>%
-  filter(missingsDraw[18]=="Draw") %>%
-  select(everything(), -winner) %>%
-  pivot_longer(everything(), names_to = "var",values_to = "values") %>%
-  ggplot(aes(x = var, y = values, fill = var, color = var))+
-  geom_boxplot(alpha = 0.2)
-
-#filtering in the case of away:
-missingsAway[8:18] %>%
-  filter(missingsAway[18]=="Away Win") %>%
-  select(everything(), -winner) %>%
-  pivot_longer(everything(), names_to = "var",values_to = "values") %>%
-  ggplot(aes(x = var, y = values, fill = var, color = var))+
-  geom_boxplot(alpha = 0.2)
-
+boxplotLeaguesFiltered(missingsHome[9:19], "Home Win")
+boxplotLeaguesFiltered(missingsDraw[9:19], "Draw")
+boxplotLeaguesFiltered(missingsAway[9:19], "Away Win")
 
 #which odd is the one that each house proposed when was correct?
 filteredMissingsHome2 <- missingsHome[9:19] %>%
@@ -141,14 +109,14 @@ filteredMissingsHome2 <- missingsHome[9:19] %>%
 #we can see here the info:
 summary(filteredMissingsHome2)
 
-filteredMissingsDraw2 <- missingsDraw[8:18] %>%
-  filter(missingsDraw[18]=="Draw") %>%
+filteredMissingsDraw2 <- missingsDraw[9:19] %>%
+  filter(missingsDraw[19]=="Draw") %>%
   select(everything(), -winner) 
 #we can see here the info:
 summary(filteredMissingsDraw2)
 
-filteredMissingsAway2 <- missingsAway[8:18] %>%
-  filter(missingsAway[18]=="Away Win") %>%
+filteredMissingsAway2 <- missingsAway[9:19] %>%
+  filter(missingsAway[19]=="Away Win") %>%
   select(everything(), -winner)
 #we can see here the info:
 summary(filteredMissingsAway2)
@@ -167,14 +135,14 @@ filteredMissingsHome21 <- missingsHome[9:19] %>%
 #we can see here the info:
 summary(filteredMissingsHome21)
 
-filteredMissingsDraw21 <- missingsDraw[8:18] %>%
-  filter(missingsDraw[18]!="Draw") %>%
+filteredMissingsDraw21 <- missingsDraw[9:19] %>%
+  filter(missingsDraw[19]!="Draw") %>%
   select(everything(), -winner) 
 #we can see here the info:
 summary(filteredMissingsDraw21)
 
-filteredMissingsAway21 <- missingsAway[8:18] %>%
-  filter(missingsAway[18]!="Away Win") %>%
+filteredMissingsAway21 <- missingsAway[9:19] %>%
+  filter(missingsAway[19]!="Away Win") %>%
   select(everything(), -winner)
 #we can see here the info:
 summary(filteredMissingsAway21)
