@@ -4,7 +4,7 @@ matchData <- dbGetQuery(con,"SELECT *
                         FROM Match
                         JOIN Country on Country.id = Match.country_id
                         JOIN League on League.id = Match.league_id")
-removeCols <- c("goal","shoton","shotoff","foulcommit","card", 
+removeCols <- c("goal","shoton","shotoff","foulcommit","card", "corner" 
                 "cross", "possession", "id..118" ,"id..116", "country_id..119", "country_id",
                 "name", "id", "country_id", "league_id")
 
@@ -21,32 +21,30 @@ matchData$winner <- ifelse(matchData$home_team_goal == matchData$away_team_goal,
                            )
                     )
 
-
-
 #######################
 #Overround
 #######################
 overroundGen <- function(dataset, bettingHouse){
   
   dataset <- cbind(dataset, implied_probabilities(dataset, method="basic")$probabilities)
-  names(dataset)[4] <- paste0("add",bettinghouse, "H")
-  names(dataset)[5] <-  paste0("add",bettinghouse, "D")
-  names(dataset)[6] <-  paste0("add",bettinghouse, "A")
+  names(dataset)[4] <- paste0("add",bettingHouse, "H")
+  names(dataset)[5] <-  paste0("add",bettingHouse, "D")
+  names(dataset)[6] <-  paste0("add",bettingHouse, "A")
   
   dataset <- cbind(dataset, implied_probabilities(dataset[1:3], method="shin")$probabilities)
-  names(dataset)[7] <- paste0("shin",bettinghouse, "H")
-  names(dataset)[8] <- paste0("shin",bettinghouse, "D")
-  names(dataset)[9] <- paste0("shin",bettinghouse, "A")
+  names(dataset)[7] <- paste0("shin",bettingHouse, "H")
+  names(dataset)[8] <- paste0("shin",bettingHouse, "D")
+  names(dataset)[9] <- paste0("shin",bettingHouse, "A")
   
   dataset <- cbind(dataset, implied_probabilities(dataset[1:3], method="wpo")$probabilities)
-  names(dataset)[10] <- paste0("cum",bettinghouse, "H")
-  names(dataset)[11] <- paste0("cum",bettinghouse, "D")
-  names(dataset)[12] <- paste0("cum",bettinghouse, "A")
+  names(dataset)[10] <- paste0("cum",bettingHouse, "H")
+  names(dataset)[11] <- paste0("cum",bettingHouse, "D")
+  names(dataset)[12] <- paste0("cum",bettingHouse, "A")
   
   dataset <- cbind(dataset, implied_probabilities(dataset[1:3], method="power")$probabilities)
-  names(dataset)[13] <- paste0("power",bettinghouse, "H")
-  names(dataset)[14] <- paste0("power",bettinghouse, "D")
-  names(dataset)[15] <- paste0("power",bettinghouse, "A")
+  names(dataset)[13] <- paste0("power",bettingHouse, "H")
+  names(dataset)[14] <- paste0("power",bettingHouse, "D")
+  names(dataset)[15] <- paste0("power",bettingHouse, "A")
   names(dataset)[1] <- paste0(bettingHouse,"H")
   names(dataset)[2] <- paste0(bettingHouse,"D")
   names(dataset)[3] <- paste0(bettingHouse,"A")
@@ -79,17 +77,14 @@ BS <- overroundGen(BS, "BS")
 #######################
 # Data Creation
 #######################
-results <- cbind(matchData[1:11], B365,
-                 matchData[12:14], BW,
-                 matchData[15:17], IW,
-                 matchData[18:20], LB,
-                 matchData[21:23], PS,
-                 matchData[24:26], WH,
-                 matchData[27:29], SJ,
-                 matchData[30:32], VC,
-                 matchData[33:35], GB,
-                 matchData[36:38], BS,
-                 matchData[40])
+results <- cbind(matchData$season, 
+                 matchData$stage, 
+                 matchData$date, 
+                 matchData$home_team_api_id, 
+                 matchData$away_team_api_id, 
+                 matchData$home_team_goal, 
+                 matchData$away_team_goal,  
+                 B365, BW, IW, LB, PS, WH, SJ, VC, GB, BS, matchData$winner)
 
 
 saveRDS(matchData, results, file = "odds.rds")

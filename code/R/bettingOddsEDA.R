@@ -53,14 +53,10 @@ missingsAway <-    cbind(matchData[1:7],
                          matchData[38],
                          matchData[40])
 
-#maybe we can do this clean with the ends_with( of tidyr)
-#we can see from before that H/D/A has alwasys same proportions so we will take just H
-
 #we can already see that we have missings, how is this for every betting house?
 table(complete.cases(matchData[9:11]))
 
-library("UpSetR")
-library(ggplot2)
+
 naniar::gg_miss_var(missingsHome[9:18]) +  labs(x="Betting houses", 
                                                 y="Number of Missings", 
                                                 title="Number of missings across our Betting houses")
@@ -69,8 +65,7 @@ naniar::gg_miss_upset(missingsHome, nsets = 26)
 missingsTable <- naniar::miss_var_summary(missingsHome)
 missingsTable
 boxplot(missingsHome[9:18]) #we can make it better.
-library(tidyr)
-library(dplyr)
+
 
 #with home
 missingsHome[9:18] %>%
@@ -184,24 +179,16 @@ filteredMissingsAway21 <- missingsAway[8:18] %>%
 #we can see here the info:
 summary(filteredMissingsAway21)
 
-#######################
-# Outliers
-#######################
+##############################
+# Outliers and correcting NA's
+##############################
 #ok, now we've explored a bit our data. What we decide to remove? What is an outlier?
 #we imputate NA's? etc.
 
 
 #we have this many missings:
 missingsTable
-#1 PSH               14811     57.0
-#2 BSH               11818     45.5
-#3 GBH               11817     45.5
-#4 SJH                8882     34.2
-#5 IWH                3459     13.3
 
-#PSH it's very hardcore number of missings...
-
-#PODRIEM LNKAR MISSINGS AMB RESULTAT QUE HAVIA DE SER???
 
 
 
