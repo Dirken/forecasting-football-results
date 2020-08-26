@@ -77,13 +77,14 @@ BS <- overroundGen(BS, "BS")
 #######################
 # Data Creation
 #######################
-results <- cbind(matchData$season, 
-                 matchData$stage, 
-                 matchData$date, 
-                 matchData$home_team_api_id, 
-                 matchData$away_team_api_id, 
-                 matchData$home_team_goal, 
-                 matchData$away_team_goal,  
+results <- cbind(season = matchData$season,
+                 stage = matchData$stage,
+                 date = matchData$date,
+                 match_api_id = matchData$match_api_id,
+                 home_team_api_id = matchData$home_team_api_id,
+                 away_team_api_id = matchData$away_team_api_id,
+                 home_team_goal = matchData$home_team_goal,
+                 away_team_goal = matchData$away_team_goal,  
                  B365, BW, IW, LB, PS, WH, SJ, VC, GB, BS, matchData$winner)
 
 

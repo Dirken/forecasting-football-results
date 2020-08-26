@@ -153,10 +153,7 @@ summary(filteredMissingsAway21)
 #ok, now we've explored a bit our data. What we decide to remove? What is an outlier?
 #we imputate NA's? etc.
 
-
-#we have this many missings:
-missingsTable
-
+results
 
 
 
