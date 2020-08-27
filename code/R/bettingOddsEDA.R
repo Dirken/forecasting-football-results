@@ -73,7 +73,7 @@ naniar::gg_miss_var(missingsHome[9:18]) +  labs(x="Betting houses",
 naniar::gg_miss_upset(missingsHome[9:18])
 naniar::gg_miss_upset(missingsHome, nsets = 26)
 missingsTable <- naniar::miss_var_summary(missingsHome)
-
+missingsTable
 
 boxplotLeagues <- function(dataset, title){
   dataset %>%

@@ -12,7 +12,7 @@ for(i in 1:numberOfTables){
   
   fileName <- paste0("missingValues/matrixplot", i, ".jpeg")
   jpeg(file=fileName, width = 1000, height = 1000)
-  matrixplot(tables[[i]])
+  matrixplot(tables[[3]]) #◘tables[[3]][86:115] to do matrixplot of betting odds
   dev.off()
   
   fileName <- paste0("missingValues/scattmatrixMiss", i, ".jpeg")
