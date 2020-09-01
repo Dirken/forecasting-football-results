@@ -1,4 +1,6 @@
-##betting odds:
+#######################
+#Data cleaning
+#######################
 
 matchData <- dbGetQuery(con,"SELECT *
                         FROM Match
@@ -11,7 +13,10 @@ removeCols <- c("goal","shoton","shotoff","foulcommit","card", "corner",
 matchData <- matchData %>%
   select(-starts_with("home_player_")) %>%
   select(-starts_with("away_player_")) %>%
-  select(-one_of(removeCols))
+  select(-one_of(removeCols)) %>%
+  rename(
+    league_name = name..120
+  )
   
 matchData$winner <- ifelse(matchData$home_team_goal == matchData$away_team_goal, 
                            "Draw", 
@@ -20,6 +25,53 @@ matchData$winner <- ifelse(matchData$home_team_goal == matchData$away_team_goal,
                                   "Away Win"
                            )
                     )
+
+removeGoals <- c("home_team_goal", "away_team_goal")
+matchData <- matchData %>% select(-one_of(removeGoals))
+matchData$date <- as.Date(matchData$date)
+cols <- c("winner", "league_name", "season", "match_api_id", "home_team_api_id", "away_team_api_id" )
+matchData[cols] <- lapply(matchData[cols], factor) 
+sapply(matchData, class)
+
+#######################
+#Imputations
+#######################
+
+matchData <- matchData[rowSums(is.na(matchData[9:38])) != ncol(matchData[9:38]), ]
+matrixplot(matchData %>% select(-matches("*(B365|BW|IW|LB|PS|WH|SJ|VC|GB|BS)(A|D)")))
+
+#######################
+#Approach #1: mice approach, should check which is the best method, seed and m and maxit
+#######################
+miceOutput <- matchData
+miceImputation <- mice(matchData[7:36],m=5,maxit=1,meth='pmm',seed=500)
+
+#Values obtained of the imputations:
+summary(miceImputation)
+
+miceImputation$imp$PSH
+
+densityplot(miceImputation)
+stripplot(miceImputation)
+
+#######################
+#Approach #2: KNN imputation. should check the K
+#######################
+knnImputedData <- knnImputation(data = matchData[7:36], k = 5, scale = T, meth="weighAvg")
+summary(knnImputedData)
+
+#######################
+#Approach #3: Random Forest imputation.
+#######################
+randomForestImputed <- missForest(matchData[7:36])$ximp #takes way too much wtf
+
+#######################
+#Approach #4: imputePCA. should check the ncp
+#######################
+pcaOutput <- imputePCA(matchData[7:36], ncp=4)
+pcaImputation <- as.data.frame(pcaImputation$completeObs)
+
+
 
 #######################
 #Overround
@@ -53,39 +105,53 @@ overroundGen <- function(dataset, bettingHouse){
 }
 
 
-B365 <- data.frame(matchData$B365H,matchData$B365D, matchData$B365A)
-B365 <- overroundGen(B365, "B365")
-BW <- data.frame(matchData$BWH,matchData$BWD, matchData$BWA)
-BW <- overroundGen(BW, "BW")
-IW <- data.frame(matchData$IWH,matchData$IWD, matchData$IWA)
-IW <- overroundGen(IW, "IW")
-LB <- data.frame(matchData$LBH,matchData$LBD, matchData$LBA)
-LB <- overroundGen(LB, "LB")
-PS <- data.frame(matchData$PSH,matchData$PSD, matchData$PSA)
-PS <- overroundGen(PS, "PS")
-WH <- data.frame(matchData$WHH,matchData$WHD, matchData$WHA)
-WH <- overroundGen(WH, "WH")
-SJ <- data.frame(matchData$SJH,matchData$SJD, matchData$SJA)
-SJ <- overroundGen(SJ, "SJ")
-VC <- data.frame(matchData$VCH,matchData$VCD, matchData$VCA)
-VC <- overroundGen(VC, "VC")
-GB <- data.frame(matchData$GBH,matchData$GBD, matchData$GBA)
-GB <- overroundGen(GB, "GB")
-BS <- data.frame(matchData$BSH,matchData$BSD, matchData$BSA)
-BS <- overroundGen(BS, "BS")
-
 #######################
 # Data Creation
 #######################
-results <- cbind(season = matchData$season,
-                 stage = matchData$stage,
-                 date = matchData$date,
-                 match_api_id = matchData$match_api_id,
-                 home_team_api_id = matchData$home_team_api_id,
-                 away_team_api_id = matchData$away_team_api_id,
-                 home_team_goal = matchData$home_team_goal,
-                 away_team_goal = matchData$away_team_goal,  
-                 B365, BW, IW, LB, PS, WH, SJ, VC, GB, BS, matchData$winner)
+#datasets <- list(matchData, miceImputation, knnImputedData, randomForestImputed, pcaImputation)
+datasets <- list(matchData, miceImputation, knnImputedData)
+for(index in datasets){
+  B365 <- data.frame(index$B365H,index$B365D, index$B365A)
+  B365 <- overroundGen(B365, "B365")
+  BW <- data.frame(index$BWH,index$BWD, index$BWA)
+  BW <- overroundGen(BW, "BW")
+  IW <- data.frame(index$IWH,index$IWD, index$IWA)
+  IW <- overroundGen(IW, "IW")
+  LB <- data.frame(index$LBH,index$LBD, index$LBA)
+  LB <- overroundGen(LB, "LB")
+  PS <- data.frame(index$PSH,index$PSD, index$PSA)
+  PS <- overroundGen(PS, "PS")
+  WH <- data.frame(index$WHH,index$WHD, index$WHA)
+  WH <- overroundGen(WH, "WH")
+  SJ <- data.frame(index$SJH,index$SJD, index$SJA)
+  SJ <- overroundGen(SJ, "SJ")
+  VC <- data.frame(index$VCH,index$VCD, index$VCA)
+  VC <- overroundGen(VC, "VC")
+  GB <- data.frame(index$GBH,index$GBD, index$GBA)
+  GB <- overroundGen(GB, "GB")
+  BS <- data.frame(index$BSH,index$BSD, index$BSA)
+  BS <- overroundGen(BS, "BS")
+  index <- cbind(season = index$season,
+                 stage = index$stage,
+                 date = index$date,
+                 match_api_id = index$match_api_id,
+                 home_team_goal = index$home_team_goal,
+                 away_team_goal = index$away_team_goal,  
+                 B365, 
+                 BW, 
+                 IW, 
+                 LB, 
+                 PS, 
+                 WH, 
+                 SJ, 
+                 VC, 
+                 GB, 
+                 BS, 
+                 winner = index$winner)
+}
+
+
+
 
 
 saveRDS(matchData, results, file = "odds.rds")
