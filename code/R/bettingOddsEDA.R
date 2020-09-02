@@ -9,8 +9,7 @@ missingsAway <- data.frame(season = matchData$season,
                       match_api_id = matchData$match_api_id,
                       home_team_api_id = matchData$home_team_api_id,
                       away_team_api_id = matchData$away_team_api_id,
-                      home_team_goal = matchData$home_team_goal,
-                      away_team_goal = matchData$away_team_goal,
+                      league_name = matchData$league_name,
                       B365A = matchData$B365A,
                       BWA = matchData$BWA,
                       IWA = matchData$IWA,
@@ -29,8 +28,7 @@ missingsDraw <-   data.frame(season = matchData$season,
                              match_api_id = matchData$match_api_id,
                              home_team_api_id = matchData$home_team_api_id,
                              away_team_api_id = matchData$away_team_api_id,
-                             home_team_goal = matchData$home_team_goal,
-                             away_team_goal = matchData$away_team_goal,
+                             league_name = matchData$league_name,
                              B365D = matchData$B365D,
                              BWD = matchData$BWD,
                              IWD = matchData$IWD,
@@ -47,10 +45,9 @@ missingsHome <-    data.frame(season = matchData$season,
                               stage = matchData$stage,
                               date = matchData$date,
                               match_api_id = matchData$match_api_id,
+                              league_name = matchData$league_name,
                               home_team_api_id = matchData$home_team_api_id,
                               away_team_api_id = matchData$away_team_api_id,
-                              home_team_goal = matchData$home_team_goal,
-                              away_team_goal = matchData$away_team_goal,
                               B365H = matchData$B365H,
                               BWH = matchData$BWH,
                               IWH = matchData$IWH,
@@ -67,10 +64,10 @@ missingsHome <-    data.frame(season = matchData$season,
 table(complete.cases(matchData[10:12]))
 
 
-naniar::gg_miss_var(missingsHome[9:18]) +  labs(x="Betting houses", 
+naniar::gg_miss_var(missingsHome[8:17]) +  labs(x="Betting houses", 
                                                 y="Number of Missings", 
                                                 title="Number of missings across our Betting houses")
-naniar::gg_miss_upset(missingsHome[9:18])
+naniar::gg_miss_upset(missingsHome[8:17])
 naniar::gg_miss_upset(missingsHome, nsets = 26)
 missingsTable <- naniar::miss_var_summary(missingsHome)
 missingsTable
@@ -84,9 +81,9 @@ boxplotLeagues <- function(dataset, title){
     theme(legend.position = "none")
 }
 
-boxplotLeagues(missingsHome[9:18],"How do betting odds distributed among brands when the local wins?")
-boxplotLeagues(missingsDraw[9:18],"How do betting odds distributed among brands when there is a draw?")
-boxplotLeagues(missingsAway[9:18],"How do betting odds distributed among brands when away wins?")
+boxplotLeagues(missingsHome[8:17],"How do betting odds distributed among brands when the local wins?")
+boxplotLeagues(missingsDraw[8:17],"How do betting odds distributed among brands when there is a draw?")
+boxplotLeagues(missingsAway[8:17],"How do betting odds distributed among brands when away wins?")
 boxplotLeagues(matchData[9:38],"How do betting odds distributed are distributed across brands?")
 
 boxplotLeaguesFiltered <- function(dataset, filterKeyword){
@@ -98,25 +95,25 @@ boxplotLeaguesFiltered <- function(dataset, filterKeyword){
     geom_boxplot(alpha = 0.2)
 }
 
-boxplotLeaguesFiltered(missingsHome[9:19], "Home Win")
-boxplotLeaguesFiltered(missingsDraw[9:19], "Draw")
-boxplotLeaguesFiltered(missingsAway[9:19], "Away Win")
+boxplotLeaguesFiltered(missingsHome[8:18], "Home Win")
+boxplotLeaguesFiltered(missingsDraw[8:18], "Draw")
+boxplotLeaguesFiltered(missingsAway[8:18], "Away Win")
 
 #which odd is the one that each house proposed when was correct?
-filteredMissingsHome2 <- missingsHome[9:19] %>%
-  filter(missingsHome[19]=="Home Win") %>%
+filteredMissingsHome2 <- missingsHome[8:18] %>%
+  filter(missingsHome[18]=="Home Win") %>%
   select(everything(), -winner)
 #we can see here the info:
 summary(filteredMissingsHome2)
 
-filteredMissingsDraw2 <- missingsDraw[9:19] %>%
-  filter(missingsDraw[19]=="Draw") %>%
+filteredMissingsDraw2 <- missingsDraw[8:18] %>%
+  filter(missingsDraw[18]=="Draw") %>%
   select(everything(), -winner) 
 #we can see here the info:
 summary(filteredMissingsDraw2)
 
-filteredMissingsAway2 <- missingsAway[9:19] %>%
-  filter(missingsAway[19]=="Away Win") %>%
+filteredMissingsAway2 <- missingsAway[8:18] %>%
+  filter(missingsAway[18]=="Away Win") %>%
   select(everything(), -winner)
 #we can see here the info:
 summary(filteredMissingsAway2)
@@ -129,20 +126,20 @@ summary(filteredMissingsAway2)
 
 
 #which odd is the one that each house proposed when was NOT correct?
-filteredMissingsHome21 <- missingsHome[9:19] %>%
-  filter(missingsHome[19]!="Home Win") %>%
+filteredMissingsHome21 <- missingsHome[8:18] %>%
+  filter(missingsHome[18]!="Home Win") %>%
   select(everything(), -winner)
 #we can see here the info:
 summary(filteredMissingsHome21)
 
-filteredMissingsDraw21 <- missingsDraw[9:19] %>%
-  filter(missingsDraw[19]!="Draw") %>%
+filteredMissingsDraw21 <- missingsDraw[8:18] %>%
+  filter(missingsDraw[18]!="Draw") %>%
   select(everything(), -winner) 
 #we can see here the info:
 summary(filteredMissingsDraw21)
 
-filteredMissingsAway21 <- missingsAway[9:19] %>%
-  filter(missingsAway[19]!="Away Win") %>%
+filteredMissingsAway21 <- missingsAway[8:18] %>%
+  filter(missingsAway[18]!="Away Win") %>%
   select(everything(), -winner)
 #we can see here the info:
 summary(filteredMissingsAway21)
