@@ -17,7 +17,11 @@ requiredPackages <- c("ggplot2",
                       "robustbase",
                       "missMDA",
                       "e1071",
-                      "knn")
+                      "knn",
+                      "tabplot",
+                      "ggcorrplot",
+                      "inspectdf")
+)
 
 for (pac in requiredPackages) {
   if(!require(pac,  character.only=TRUE)){

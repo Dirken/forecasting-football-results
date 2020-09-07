@@ -1,7 +1,7 @@
 #######################
 # Exploration
 #######################
-readRDS(file = "odds.rds")
+readRDS("./rds/matchData.rds")
 
 missingsAway <- data.frame(season = matchData$season,
                       stage = matchData$stage,
@@ -144,13 +144,6 @@ filteredMissingsAway21 <- missingsAway[8:18] %>%
 #we can see here the info:
 summary(filteredMissingsAway21)
 
-##############################
-# Outliers and correcting NA's
-##############################
-#ok, now we've explored a bit our data. What we decide to remove? What is an outlier?
-#we imputate NA's? etc.
-
-results
 
 
 

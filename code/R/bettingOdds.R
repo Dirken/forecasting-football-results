@@ -35,7 +35,8 @@ sapply(matchData, class)
 
 
 
-matchData <- matchData[rowSums(is.na(matchData[9:38])) != ncol(matchData[9:38]), ]
+matchData <- matchData[rowSums(is.na(matchData[9:38])) != ncol(matchData[9:38]), ] #wtf, why not working now.
+saveRDS(matchData, "./rds/matchData-noOverround.rds")
 matrixplot(matchData %>% select(-matches("*(B365|BW|IW|LB|PS|WH|SJ|VC|GB|BS)(A|D)")))
 
 #######################
@@ -57,8 +58,8 @@ miceOutput[7:36] <- mice::complete(miceImputation, 1)
 miceOutput
 densityplot(miceImputation)
 stripplot(miceImputation)
-saveRDS(miceOutput, "miceOutput-noOverround.rds")
-readRDS("miceOutput-noOverround.rds")
+saveRDS(miceOutput, "./rds/miceOutput-noOverround.rds")
+readRDS("./rds/miceOutput-noOverround.rds")
 #######################
 #Approach #2: KNN imputation. should check the K
 #######################
@@ -68,8 +69,8 @@ knnImputedData[7:36] <- knnImputation(data = matchData[7:36], k = 5, scale = T, 
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 summary(knnImputedData)
-saveRDS(knnImputedData, "knnImputedData-noOverround.rds")
-readRDS("knnImputedData-noOverround.rds")
+saveRDS(knnImputedData, "./rds/knnImputedData-noOverround.rds")
+readRDS("./rds/knnImputedData-noOverround.rds")
 #######################
 #Approach #3: Random Forest imputation.
 #######################
@@ -86,12 +87,13 @@ readRDS("knnImputedData-noOverround.rds")
 #######################
 pcaOutput <- matchData
 start.time <- Sys.time()
-pcaOutput[7:36] <- imputePCA(matchData[7:36], ncp=4)
+pcaImputed <- imputePCA(matchData[7:36], ncp=4)
+pcaOutput[7:36] <- as.data.frame(pcaImputed$completeObs)
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 print(time.taken)
-saveRDS(pcaOutput, "pcaOutput-noOverround.rds")
-readRDS("pcaOutput-noOverround.rds")
+saveRDS(pcaOutput, "./rds/pcaOutput-noOverround.rds")
+readRDS("./rds/pcaOutput-noOverround.rds")
 #######################
 #Overround
 #######################
@@ -127,7 +129,7 @@ overroundGen <- function(dataset, bettingHouse){
 # Data Creation
 #######################
 #datasets <- list(matchData, miceOutput, knnImputedData, randomForestImputed, pcaImputation)
-datasets <- list(matchData, miceOutput, knnImputedData, pcaOutput)
+datasets <- list(miceOutput, knnImputedData, pcaOutput)
 counter <- 0
 for(index in datasets){
   counter = counter + 1
@@ -180,15 +182,15 @@ pcaOutput <- datasets[[4]]
 
 
 
-saveRDS(matchData, "matchData.rds")
-saveRDS(miceOutput, "miceOutput.rds")
-saveRDS(knnImputedData, "knnImputedData.rds")
-saveRDS(pcaOutput, "pcaOutput.rds")
-save.image(file = "bettingOdds.RData")
-readRDS("matchData.rds")
-readRDS("miceOutput.rds")
-readRDS("knnImputedData.rds")
-readRDS("pcaOutput.rds")
-load.image("bettingOdds.RData")
+saveRDS(matchData, "./rds/matchData.rds")
+saveRDS(miceOutput, "./rds/miceOutput.rds")
+saveRDS(knnImputedData, "./rds/knnImputedData.rds")
+saveRDS(pcaOutput, "./rds/pcaOutput.rds")
+save.image(file = "./rds/bettingOdds.RData")
+readRDS("./rds/matchData.rds")
+readRDS("./rds/miceOutput.rds")
+readRDS("./rds/knnImputedData.rds")
+readRDS("./rds/pcaOutput.rds")
+load.image("./rds/bettingOdds.RData")
 
 
