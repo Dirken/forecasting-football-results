@@ -1,18 +1,29 @@
-library(ggplot2) 
-library(ggrepel) 
-library(dplyr)
-library(RSQLite)
-library(mice)
-library(VIM)
-library(XML)
-library(implied)
-library(visdat)
-library("UpSetR")
-library(tidyr)
-library(DMwR)
-library(esquisse)
-library(heplots)
-library(ggrepel)
-library(missForest)
-require(robustbase)
-library(missMDA)
+requiredPackages <- c("ggplot2", 
+                      "ggrepel", 
+                      "dplyr",
+                      "RSQLite",
+                      "mice",
+                      "VIM",
+                      "XML",
+                      "implied",
+                      "visdat",
+                      "UpSetR",
+                      "tidyr",
+                      "DMwR",
+                      "esquisse",
+                      "heplots",
+                      "ggrepel",
+                      "missForest",
+                      "robustbase",
+                      "missMDA",
+                      "e1071",
+                      "knn")
+
+for (pac in requiredPackages) {
+  if(!require(pac,  character.only=TRUE)){
+    install.packages(pac, repos="http://cran.rstudio.com")
+    library(pac,  character.only=TRUE)
+  } 
+}
+rm(pac)
+rm(requiredPackages)
