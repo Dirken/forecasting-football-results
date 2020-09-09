@@ -12,8 +12,10 @@ source("leaguesAnalysis.R")
 #########################################################
 
 #predicting odds, are they accurate?
-source("bettingOdds.R") #here a bit messy already because i am creating new variables...
+source("bettingOdds.R") 
 source("bettingOddsEDA.R")
+source("bettingOddsOutliers.R")
+source("bettingOddsDimensions.R")
 source("bettingOddsModelling.R")
 
 

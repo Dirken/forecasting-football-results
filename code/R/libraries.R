@@ -20,8 +20,10 @@ requiredPackages <- c("ggplot2",
                       "knn",
                       "tabplot",
                       "ggcorrplot",
-                      "inspectdf")
-)
+                      "inspectdf",
+                      "ggbiplot",
+                      "devtools")
+
 
 for (pac in requiredPackages) {
   if(!require(pac,  character.only=TRUE)){
@@ -31,3 +33,6 @@ for (pac in requiredPackages) {
 }
 rm(pac)
 rm(requiredPackages)
+
+
+#install_github("vqv/ggbiplot")
