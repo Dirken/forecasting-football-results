@@ -1,0 +1,21 @@
+{
+  "name": "tfm-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "bootstrap": "^4.4.1",
+    "bootstrap-vue": "^2.11.0",
+    "nodemailer": "^6.4.6",
+    "vue": "^2.6.11"
+  }
+}
