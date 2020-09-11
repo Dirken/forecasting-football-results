@@ -2,7 +2,7 @@
 #Dataset
 ##########################################
 
-con <- dbConnect(SQLite(), dbname="../../datasets/european-football-db/database.sqlite")
+con <- dbConnect(SQLite(), dbname="../../../datasets/european-football-db/database.sqlite")
 dbListTables(con)
 league <- tbl_df(dbGetQuery(con,"SELECT * FROM League"))
 team   <- tbl_df(dbGetQuery(con,"SELECT * FROM Team"))
