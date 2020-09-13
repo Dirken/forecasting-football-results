@@ -18,7 +18,7 @@
 #table(is.na(match$goal))
 #FALSE  TRUE 
 #14217 11762 
-
+11762/(11762+14217)
 matchData <- dbGetQuery(con,"SELECT *
                         FROM Match
                         JOIN Country on Country.id = Match.country_id
@@ -32,3 +32,11 @@ table(matchData$name[is.na(matchData$goal)])
 #Seems like the data from Spanish and English leagues are well scrapped but others are not.
 #Belgium      France       Italy Netherlands      Poland    Portugal    Scotland       Spain Switzerland 
 #1728        1014           3        1918        1913        2052        1811           1        1322 
+notMissing <- table(matchData$name[!is.na(matchData$goal)])
+missing <- table(matchData$name[is.na(matchData$goal)])
+total <- dplyr::bind_rows(notMissing, missing)
+total[is.na(total)] <- 0
+total[3,] <- (total[1,] / (total[1,] + total[2,]))*100
+total
+total$label <- NULL
+total$label<- c("Data", "Missing","%")

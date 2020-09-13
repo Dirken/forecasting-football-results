@@ -1,28 +1,22 @@
-requiredPackages <- c("ggplot2", 
-                      "ggrepel", 
-                      "dplyr",
-                      "RSQLite",
-                      "mice",
-                      "VIM",
-                      "XML",
-                      "implied",
-                      "visdat",
-                      "UpSetR",
-                      "tidyr",
-                      "DMwR",
-                      "esquisse",
-                      "heplots",
-                      "ggrepel",
-                      "missForest",
-                      "robustbase",
-                      "missMDA",
-                      "e1071",
-                      "knn",
-                      "tabplot",
-                      "ggcorrplot",
-                      "inspectdf",
-                      "ggbiplot",
-                      "devtools")
+requiredPackages <- c("ggplot2", "ggrepel", 
+                      "dplyr",  "RSQLite",
+                      "mice",   "VIM",
+                      "XML",  "implied",
+                      "visdat",  "UpSetR",
+                      "tidyr", "DMwR",
+                      "esquisse", "heplots",
+                      "ggrepel", "missForest",
+                      "robustbase", "missMDA",
+                      "e1071","knn",
+                      "tabplot",  "ggcorrplot",
+                      "inspectdf","ggbiplot",
+                      "devtools", "purrr",
+                      "xml2", "magrittr",
+                      "viridis", "tibble",
+                      "pander")
+
+
+
 
 
 for (pac in requiredPackages) {
