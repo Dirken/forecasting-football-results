@@ -49,7 +49,6 @@ incidents <- map_df(list('goal', 'card', 'foulcommit', 'shoton', 'shotoff', 'cro
 })
 
 # Turn the type fields into factors
-
 incidents$type <- factor(incidents$type)
 incidents$subtype1 <- factor(incidents$subtype1)
 incidents$subtype2 <- factor(incidents$subtype2)
