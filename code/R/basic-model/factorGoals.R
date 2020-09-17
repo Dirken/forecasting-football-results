@@ -2,6 +2,11 @@
 #Goal
 #######################
 goals  <- incidents %>% filter(type == 'goal')
+
+table(goals$subtype1)
+table(goals$subtype2)
+
+
 goals %>%
   ggplot(mapping = aes(x = half_elapsed)) +
   geom_bar(mapping = aes(fill = subtype1)) +
@@ -18,13 +23,21 @@ goals %>%
   geom_bar(mapping = aes(fill = subtype1)) +
   scale_color_viridis(discrete = T)
 
-goals %>%
-  ggplot(mapping = aes(x = lon, y = lat)) +
-  geom_jitter(mapping = aes(colour = subtype1), alpha = 0.3, size = 2, stroke = 0) +
-  scale_color_viridis(discrete = T) +
-  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
-  facet_wrap(~half) +
-  theme_minimal()
+data <- unique(goals$subtype1)
+for(i in data){
+  fileName <- paste0("./factorsImages/goals/",i, ".png")
+  png(filename = fileName, bg="transparent")
+  ggPlot <- goals %>%
+    filter(subtype1 == i) %>%
+    ggplot(mapping = aes(x = lon, y = lat)) +
+    geom_jitter(mapping = aes(colour = i), alpha = 0.3, size = 2, stroke = 0) +
+    scale_color_viridis(discrete = T) +
+    guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+    facet_wrap(~half) +
+    theme_minimal()
+  print(ggPlot)
+  dev.off()
+}
 
 narrowmatch  <- match %>%
   select(id, country_id, league_id, season, home_team_api_id, away_team_api_id, home_team_goal, away_team_goal)
@@ -33,6 +46,8 @@ goals  <- incidents %>%
   filter(type == 'goal') %>% 
   inner_join(narrowmatch, by = c('game_id' = 'id'), copy = T)
 
+library(dplyr)
+library(magrittr)
 goals %<>% mutate(scored_by = ifelse(team == home_team_api_id, 'home', 'away'))
 goals %<>%
   mutate(lat = ifelse(half == 1, lat, 70 - lat),
@@ -78,7 +93,7 @@ pitch.w = pitch.w * (2/3)
 pitch.aes  <- aes(x = x1, y = y1, xend = x2, yend = y2)
 
 pitch  <- ggplot(mapping = aes(x = lon, y = lat)) +
-  field                   %>% geom_segment(mapping = pitch.aes, colour = 'white') +
+  field                   %>% geom_segment(mapping = pitch.aes, colour = '#775D6A') +
   circle                  %>% geom_curve(  mapping = pitch.aes, colour = 'white', curvature = 1, ncp = 20) +
   circle                  %>% geom_curve(  mapping = pitch.aes, colour = 'white', curvature = -1, ncp = 20) +
   penalty_curve_bottom    %>% geom_curve(  mapping = pitch.aes, colour = 'white', curvature = -0.4) +
@@ -98,3 +113,4 @@ pitch +
   guides(colour = guide_legend(override.aes = list(alpha = 1))) +
   labs(title = "Scoring positions") +
   facet_wrap(~half, labeller = label_both)
+print(pitch)

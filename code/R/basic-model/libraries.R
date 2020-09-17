@@ -13,11 +13,11 @@ requiredPackages <- c("ggplot2", "ggrepel",
                       "devtools", "purrr",
                       "xml2", "magrittr",
                       "viridis", "tibble",
-                      "pander")
+                      "pander", "ggsoccer")
 
 
 
-
+install.packages("ggsoccer")
 
 for (pac in requiredPackages) {
   if(!require(pac,  character.only=TRUE)){
@@ -28,5 +28,6 @@ for (pac in requiredPackages) {
 rm(pac)
 rm(requiredPackages)
 
+#devtools::install_github("FCrSTATS/SBpitch")
 
 #install_github("vqv/ggbiplot")

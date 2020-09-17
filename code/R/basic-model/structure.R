@@ -2,7 +2,10 @@
 #General
 #########################################################
 source("libraries.R")
+library("SBpitch")
+library("viridis")
 source("loadingDB.R")
+library("ggsoccer")
 #source("missingValues.R")
 
 #########################################################

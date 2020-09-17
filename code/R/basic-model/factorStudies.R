@@ -37,8 +37,8 @@ exampleCross
 #IncidentDataTransformation xml -> table
 ###############################################
 #source(incidentDataTransformation.R)
-readRDS("./rds/incidents.rds")
-
+incidents <- readRDS("./rds/incidents.rds")
+names(incidents)
 ###############################################
 # Incident Data Analysis
 ###############################################
@@ -49,7 +49,7 @@ source(factorCorner.R)
 source(factorShotOff.R)
 source(factorShotOn.R)
 source(factorCommit.R)
-source(factorPosession.R)
+source(factorThrowin.R)
 
 ##############################################
 # Other data
