@@ -41,6 +41,7 @@ cards %>%
   scale_color_viridis(discrete = T) +
   facet_wrap(~subtype2, scales = "free_x")
 
+
 #############
 #Percentages
 #############
@@ -95,3 +96,105 @@ teams <- cards %>%
   select(team)
 sort(table(teams))
 
+aggregate(team, teams, by=)
+team$team_long_name[team$team_api_id == "8558"] #Espanyol KEKW
+team$team_long_name[team$team_api_id == "8305"] #Getafe KEKW
+team$team_long_name[team$team_api_id == "10267"] #Valencia
+team$team_long_name[team$team_api_id == "8686"] 
+unique(match$league_id[match$home_team_api_id == "8558"])
+
+
+#######################
+#How related are cards and fouls commited? 
+#######################
+
+foulCommit  <- incidents %>% filter(type == 'foulcommit')
+
+unique(foulCommit$subtype2)
+foulCommit$subtype2 <- NULL 
+data <- unique(foulCommit$subtype1)
+data
+unique(cards$subtype2)
+
+#######################
+#lets see how fouls distribute
+#######################
+foulCommit %>%
+  ggplot(mapping = aes(x = lon, y = lat)) +
+  geom_jitter(mapping = aes(colour = subtype1), alpha = 0.3, size = 2, stroke = 0) +
+  scale_color_viridis(discrete = T) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+  facet_wrap(~half) +
+  theme_minimal()
+
+foulCommit <- foulCommit[!is.na(foulCommit)]
+#All na's? what? I'll just remove the factor so the plot doesn't complain
+
+data <- unique(data)[-1]
+
+for(i in data){
+  fileName <- paste0("./factorsImages/fouls/",i, ".png")
+  png(filename = fileName, bg="transparent")
+  ggPlot <- foulCommit %>%
+    filter(subtype1 == i) %>%
+    ggplot(mapping = aes(x = lon, y = lat)) +
+    geom_jitter(mapping = aes(colour = subtype1), alpha = 0.3, size = 2, stroke = 0) +
+    scale_color_viridis(discrete = T) +
+    guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+    facet_wrap(~half) +
+    theme_minimal()
+  print(ggPlot)
+  dev.off()
+}
+
+#######################
+#Objective: Merging both
+#######################
+
+names(foulCommit)[4]
+colnames(foulCommit)[3] <- "subtypeFoul2"
+colnames(foulCommit)[4] <- "subtypeFoul1"
+
+total <- NULL
+total <- merge(foulCommit, cards, by = c("game_id", "elapsed", "elapsed_plus", "half", "half_elapsed"), all.x=TRUE)
+total
+
+foulCommit %>%
+  ggplot(mapping = aes(x = lon, y = lat)) +
+  geom_jitter(mapping = aes(colour = subtypeFoul1), alpha = 0.3, size = 2, stroke = 0) +
+  scale_color_viridis(discrete = T) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+  facet_wrap(~half) +
+  theme_minimal()
+
+total %>%
+  filter(subtype1 == 'y') %>%
+  ggplot(mapping = aes(x = lon.x, y = lat.x)) +
+  geom_jitter(mapping = aes(colour = subtypeFoul1), alpha = 0.3, size = 2, stroke = 0) +
+  scale_color_viridis(discrete = T) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+  facet_wrap(~half) +
+  theme_minimal()
+
+unique(total$id.x[total$subtype1 == "y" && is.null(total$lon.x)]) #what?
+matrixplot(total)
+yellowCardsMatches <- total %>%
+  filter(subtype1 == 'y')
+matrixplot(yellowCardsMatches)
+
+twoYellowCardsMatches <- total %>%
+  filter(subtype1 == 'y2')
+
+redCardMatches <- total %>%
+  filter(subtype1 == 'r')
+
+match$match_api_id[]
+redCardMatch <- match %>% 
+  filter(match$match_api_id %in% redCardMatches$id.x)
+
+localFactorRedCard <- redCardMatch %>%
+  select(home_team_goal, away_team_goal)
+
+localFactorRedCard$result <- ifelse(localFactorRedCard$home_team_goal == localFactorRedCard$away_team_goal,
+                                    'D', ifelse(localFactorRedCard$home_team_goal > localFactorRedCard$away_team_goal, 'H', 'A'))
+table(localFactorRedCard$result)

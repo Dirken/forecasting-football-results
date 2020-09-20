@@ -2,10 +2,8 @@
 #General
 #########################################################
 source("libraries.R")
-library("SBpitch")
 library("viridis")
 source("loadingDB.R")
-library("ggsoccer")
 #source("missingValues.R")
 
 #########################################################
@@ -13,6 +11,7 @@ library("ggsoccer")
 #########################################################
 #factor analysis: does possesion imply win? Do red cards imply more wins?
 source("factorStudies.R")
+
 
 #########################################################
 # Maybe useful? Don't think so
