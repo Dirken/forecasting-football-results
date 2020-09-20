@@ -251,6 +251,67 @@ result$totalMatchA <- result$localGoals1stPart.y+ result$localGoals2ndPart.y
 result$finalRes <- ifelse(result$totalMatchH > result$totalMatchA, "H",
                           ifelse(result$totalMatchH == result$totalMatchA, "D",
                                  "A"))
-result
 
-#pending analysis.
+DA <- result %>% filter(winnerFirstPart.x == 'D') %>% filter(finalRes == 'A')
+length(DA$season) #440
+
+DH <- result %>% filter(winnerFirstPart.x == 'D') %>% filter(finalRes == 'H')
+length(DH$season) # 620
+
+DD <- result %>% filter(winnerFirstPart.x == 'D') %>% filter(finalRes == 'D')
+length(DD$season) #601
+
+HD <- result %>% filter(winnerFirstPart.x == 'H') %>% filter(finalRes == 'D')
+length(HD$season) #695
+
+HA <- result %>% filter(winnerFirstPart.x == 'H') %>% filter(finalRes == 'A')
+length(HA$season) #300
+
+HH <- result %>% filter(winnerFirstPart.x == 'H') %>% filter(finalRes == 'H')
+length(HH$season) #4073
+
+AA <- result %>% filter(winnerFirstPart.x == 'A') %>% filter(finalRes == 'A')
+length(AA$season) #2320
+
+AD <- result %>% filter(winnerFirstPart.x == 'A') %>% filter(finalRes == 'D')
+length(AD$season) #678
+
+AH <- result %>% filter(winnerFirstPart.x == 'A') %>% filter(finalRes == 'H')
+length(AH$season) #359
+
+barPlotData$values <- NULL
+barPlotData$values <- c(440,620,601,695,300,4073,2320,678,359)
+barPlotData$names <- c("DA","DH","DD","HD","HA","HH","AA","AD","AH")
+
+barplot(barPlotData$values, names.arg = barPlotData$names)
+
+changeL <- length(result$game_id[result$winnerFirstPart.x != result$finalRes])
+all <- length(result$game_id)
+100*changeL/all
+
+#diff of goals? density plot?
+mean(result$totalMatchH)
+mean(result$totalMatchA)
+mean(result$totalMatchH - result$totalMatchA)
+
+result %>%
+  ggplot( aes(x=result$totalMatchH, fill="#69b3a2")) +
+  geom_density( color="#69b3a2", alpha=0.6) +
+  labs(fill="")
+
+
+result %>%
+  ggplot( aes(x=result$totalMatchA, fill="#404080")) +
+  geom_density( color="#404080", alpha=0.6) +
+  labs(fill="")
+
+result %>% 
+  ggplot( aes(x) ) + 
+  geom_density( aes(x = result$totalMatchH, y = ..density..), fill="red", alpha=0.6 ) + 
+  #geom_label( aes(x=4.5, y=0.25, label="Home Densities"), color="#69b3a2") +
+  geom_density( aes(x = result$totalMatchA, y = ..density..), fill= "green", alpha=0.6) +
+  #geom_label( aes(x=4.5, y=-0.25, label="Away Densities"), color="#404080") +
+  xlab("Goals per match") +
+  geom_vline(xintercept =  mean(result$totalMatchA), size = 1, color ="green") +
+  geom_vline(xintercept = mean(result$totalMatchH), size= 1, color="red")
+
