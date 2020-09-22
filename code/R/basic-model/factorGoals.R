@@ -315,3 +315,6 @@ result %>%
   geom_vline(xintercept =  mean(result$totalMatchA), size = 1, color ="green") +
   geom_vline(xintercept = mean(result$totalMatchH), size= 1, color="red")
 
+
+#saveRDS(result, "./rds/result.rds")
+
