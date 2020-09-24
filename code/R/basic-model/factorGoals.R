@@ -37,6 +37,12 @@ ggPlot <- goals %>%
 print(ggPlot)
 dev.off()
 
+
+pitch + goals %>%
+  geom_jitter(mapping = aes(colour = subtype1), alpha = 0.3, size = 2, stroke = 0) +
+  scale_color_viridis(discrete = T) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) 
+
 #printing one by one:
 data <- unique(goals$subtype1)
 data <- data[-8]
@@ -165,7 +171,7 @@ secondHalfGoals <- goals %>%
 #We can see that we have more goals in the first part than in the second, and quite significantly indeed.
 
 percentage <- 100*firstHalfGoals/(firstHalfGoals+secondHalfGoals)
-
+percentage
 goals %>%
   ggplot(mapping = aes(x = half_elapsed)) +
   geom_bar(mapping = aes(fill = subtype1)) +
@@ -279,10 +285,16 @@ length(AD$season) #678
 AH <- result %>% filter(winnerFirstPart.x == 'A') %>% filter(finalRes == 'H')
 length(AH$season) #359
 
+barPlotData <- NULL
 barPlotData$values <- NULL
 barPlotData$values <- c(440,620,601,695,300,4073,2320,678,359)
 barPlotData$names <- c("DA","DH","DD","HD","HA","HH","AA","AD","AH")
 
+a <- 4073 / sum(barPlotData$values)
+a
+b <- 2320 / sum(barPlotData$values)
+b
+100*(300 + 359) / sum(barPlotData$values)
 barplot(barPlotData$values, names.arg = barPlotData$names)
 
 changeL <- length(result$game_id[result$winnerFirstPart.x != result$finalRes])
@@ -313,7 +325,9 @@ result %>%
   #geom_label( aes(x=4.5, y=-0.25, label="Away Densities"), color="#404080") +
   xlab("Goals per match") +
   geom_vline(xintercept =  mean(result$totalMatchA), size = 1, color ="green") +
-  geom_vline(xintercept = mean(result$totalMatchH), size= 1, color="red")
+  geom_vline(xintercept = mean(result$totalMatchH), size= 1, color="red") +
+  theme(legend.direction ="horizontal", legend.position = "bottom")
+  
 
 
 #saveRDS(result, "./rds/result.rds")
