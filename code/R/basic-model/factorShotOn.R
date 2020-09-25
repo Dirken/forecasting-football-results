@@ -9,7 +9,7 @@ shoton$type <- NULL
 
 data <- unique(shoton$subtype1)
 for(i in data){
-  fileName <- paste0("factorsImages/fouls/",i, ".png")
+  fileName <- paste0("factorsImages/shotOn/",i, ".png")
   png(filename = fileName, bg="transparent")
   ggPlot <- shoton %>% 
     filter(subtype1 == i) %>%
@@ -24,4 +24,4 @@ for(i in data){
 }
 
 
-head(shoton,10)
+View(shoton)

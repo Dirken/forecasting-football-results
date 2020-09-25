@@ -10,7 +10,7 @@ shotoff$type <- NULL
 
 data <- unique(shotoff$subtype1)
 for(i in data){
-  fileName <- paste0("./factorsImages/fouls/",i, ".png")
+  fileName <- paste0("./factorsImages/shotOff/",i, ".png")
   png(filename = fileName, bg="transparent")
   ggPlot <- shotoff %>% 
     filter(subtype1 == i) %>%

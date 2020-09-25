@@ -16,13 +16,24 @@ corner %>%
   ggtitle("hjopa")
 
  
-
-corner %>%
-  ggplot(mapping = aes(x = lon, y = lat)) +
-  annotate_pitch(colour="white", fill="#538032", limits=T) + theme_pitch() +
+pitch + corner %>%
   geom_jitter(mapping = aes(colour = subtype1), alpha = 0.3, size = 2, stroke = 0) +
-  scale_color_viridis(discrete = T) +
-  theme_minimal()
+  scale_color_viridis(discrete = T)
+
+
+#are crosses associated with a bigger win %?
+
+View(corner)
+
+
+
+
+
+
+
+
+
+
 
 
 
