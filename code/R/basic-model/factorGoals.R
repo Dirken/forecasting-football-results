@@ -27,13 +27,11 @@ dev.off()
 #printing all variables in a map:
 
 png(filename = "./factorsImages/goals/goalsAllSubtypes.png")
-ggPlot <- goals %>%
-  ggplot(mapping = aes(x = lon, y = lat)) +
+ggPlot <- pitch + goals %>%
+  filter(! subtype1 == 'n' ) %>%
   geom_jitter(mapping = aes(colour = subtype1), alpha = 0.3, size = 2, stroke = 0) +
-  scale_color_viridis(discrete = T) +
-  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
-  facet_wrap(~half) +
-  theme_minimal()
+  #scale_color_viridis(discrete = T) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) + coord_flip()
 print(ggPlot)
 dev.off()
 
@@ -48,15 +46,13 @@ data <- unique(goals$subtype1)
 data <- data[-8]
 for(i in data){
   fileName <- paste0("./factorsImages/goals/",i, ".png")
-  png(filename = fileName)
-  ggPlot <- goals %>%
+  png(filename = fileName, , width = 1200, height = 860)
+  ggPlot <- pitch + goals %>%
     filter(subtype1 == i) %>%
-    ggplot(mapping = aes(x = lon, y = lat)) +
-    geom_jitter(mapping = aes(colour = i), alpha = 0.3, size = 2, stroke = 0) +
-    scale_color_viridis(discrete = T) +
-    guides(colour = guide_legend(override.aes = list(alpha = 1))) +
-    facet_wrap(~half) +
-    theme_minimal()
+    geom_jitter(mapping = aes(colour = i), alpha = 0.5, size = 3, stroke = 0) +
+    #scale_color_viridis(discrete = T) +
+    guides(colour = guide_legend(override.aes = list(alpha = 1))) 
+    #facet_wrap(~half) 
   print(ggPlot)
   dev.off()
 }#we have to study what each subtype means....

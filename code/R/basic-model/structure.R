@@ -1,6 +1,7 @@
 #########################################################
 #General
 #########################################################
+shell.exec("folders.bat")
 source("libraries.R")
 library("viridis")
 source("loadingDB.R")
@@ -11,6 +12,8 @@ source("loadingDB.R")
 #########################################################
 #factor analysis: does possesion imply win? Do red cards imply more wins?
 source("factorStudies.R")
+source("squad.R")
+source("transformations.R")
 
 
 #########################################################

@@ -255,4 +255,30 @@ table(localFactorRedCard$result)
 
 #how does this affect winning / losing
 
+#-take matches with red cards,
+# see matches from those goals
+#see what happens
+
+redCards <- cards %>% filter(subtype1 %in% c('r','y2'))
+redCards <- redCards %>% select(subtype1,game_id, half_elapsed)
+names(redCards)[1] <- "type"
+
+filteredGoals <- incidents %>% select(game_id, half_elapsed, type) %>% filter(type == "goal")
+
+goalsAndCards <- merge(filteredGoals, redCards, all=T)
+#removing matches which only have goals :)
+write.csv2(goalsAndCards, file="goalsAndCards.csv")
+
+indexGames <- c(1964, 2246, 2252, 2599, 3255, 3725, 3864, 3874, 3926, 4189, 4342, 4412, 4424, 4618, 5636, 5682, 5725, 5793, 6005, 6186, 6289, 6302, 6439, 6538, 6631, 6744, 6856, 6872, 6921, 7147, 7178, 8039, 8081, 8341, 8542, 8617, 8682, 8714, 8823, 8835, 9058, 9235, 9239, 9353, 9391, 9394, 9541, 9555, 9569, 9618, 9627, 9628, 9735, 9832, 10108, 10296, 10329, 10565, 10588, 10607, 10772, 10842, 10860, 10920, 10948, 10973, 10999, 11134, 11207, 11215, 11236, 11276, 11606, 11629, 11679, 11706, 11721, 11731, 11797, 11816, 11853, 11866, 11873, 11900, 11909, 11935, 11962, 12020, 12030, 12062, 12082, 12084, 12162, 12249, 12265, 12428, 12462, 12492, 12712, 12824, 12966, 12974, 13143, 13247, 15580, 15681, 21562, 21654, 21730, 21753, 21823, 21856, 21922, 21931, 21932, 21940, 22012, 22035, 22083, 22101, 22159, 22364, 22603, 22659, 22663, 22671, 22696, 22713, 22744, 22780, 22794, 22861, 22867, 22969, 23006, 23011, 23051, 23117, 23154, 23172, 23175, 23196, 23280, 23576, 23688, 23762, 23986, 24127, 24150, 24418, 24557, 25892)
+
+goalsAndCards <- goalsAndCards %>% select(game_id, half_elapsed, type) %>% filter(game_id %in% indexGames)
+
+redCardsMinutes <-  goalsAndCards %>% select(game_id, half_elapsed, type) %>% filter(!type == 'goal')
+#65.96853
+
+
+goalsAndCardsWhereThereIsCard <- filter(goalsAndCards, game_id %in% redCardsMinutes$game_id)
+goalsAndCardsWhereThereIsCard %>% group_by(game_id)%>% having(time > 90) %>% count()
+
+print(redCardMinutes)
 

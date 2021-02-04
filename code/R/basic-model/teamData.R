@@ -22,11 +22,14 @@ team_attrs <- team_attrs %>%
 View(team_attrs)# this table is pretty interesting because I didn't expect to have data from different years.
 #we can see that in this dataset, if a team is progressing and we could even calculate an average per year or so..
 
+
 #lets visualize an example:
 library(lubridate)
 team_attrs$date <- year(ymd_hms(team_attrs$date))
-team_attrs$
 team_attrs$team_api_id
+
+matrixplot(team_attrs) #no missings
+sapply(team_attrs, is.na)
 
 team_attrsPlot <- head(team_attrs,58)
 ggplot(data = team_attrsPlot, aes(x = date, y = buildUpPlaySpeed, color=factor(team_api_id), group = team_api_id)) +
@@ -35,7 +38,7 @@ ggplot(data = team_attrsPlot, aes(x = date, y = buildUpPlaySpeed, color=factor(t
   theme(legend.position = "bottom")+
   labs(x = "Years",
        y = "Build Up Play Speed",
-       title = "How improves team data across the years")
+       title = "How some teams improves across the years on a given variable")
 
 
 
@@ -43,8 +46,14 @@ ggplot(data = team_attrsPlot, aes(x = date, y = buildUpPlaySpeed, color=factor(t
 library("corrplot")
 corrPlot <- corrplot(cor(team_attrs[4:length(team_attrs)]))
 
-team_attrsAVG <- team_attrs %>%
-  select(-c("team_fifa_api_id", 
-             "team_api_id", 
-             "date")) %>%
-  mutate(Mean = rowMeans(.))
+#doesnt' make sense to do an average because this falls into categories!!! 
+#and doesn't mean the more the better!
+
+#team_attrsAVG <- team_attrs %>%
+  #select(-c("team_fifa_api_id", 
+   #          "team_api_id", 
+    #         "date")) %>%
+  #mutate(Mean = rowMeans(.))
+
+#min(team_attrsAVG$Mean)
+#nax(team_attrsAVG$Mean)
