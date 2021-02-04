@@ -22,7 +22,8 @@ requiredPackages <- c("ggplot2",
                       "ggcorrplot",
                       "inspectdf",
                       "ggbiplot",
-                      "devtools")
+                      "devtools",
+                      "verification")
 
 
 for (pac in requiredPackages) {

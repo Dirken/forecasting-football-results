@@ -5,7 +5,7 @@ source("loadingDB.R")
 source("missingValues.R") #need to interpret better aggr plots.
 #Are all leagues equal? How does win % holds across leagues? How uniform each league is?
 #also we study other factors per league
-source("leaguesAnalysis.R")
+source("leagueAnalysis.R")
 
 #########################################################
 #Betting Odds model

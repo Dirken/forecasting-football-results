@@ -25,6 +25,7 @@ matchData$winner <- ifelse(matchData$home_team_goal == matchData$away_team_goal,
                                   "Away Win"
                            )
                     )
+matchData$goalDiff <- matchData$home_team_goal - matchData$away_team_goal
 
 removeGoals <- c("home_team_goal", "away_team_goal")
 matchData <- matchData %>% select(-one_of(removeGoals))
@@ -34,8 +35,8 @@ matchData[cols] <- lapply(matchData[cols], factor)
 sapply(matchData, class)
 
 
-
-matchData <- matchData[rowSums(is.na(matchData[9:38])) != ncol(matchData[9:38]), ] #wtf, why not working now.
+#na's out
+matchData <- matchData[rowSums(is.na(matchData[9:39])) != ncol(matchData[9:39]), ] #wtf, why not working now.
 saveRDS(matchData, "./rds/matchData-noOverround.rds")
 matrixplot(matchData %>% select(-matches("*(B365|BW|IW|LB|PS|WH|SJ|VC|GB|BS)(A|D)")))
 
@@ -43,58 +44,51 @@ matrixplot(matchData %>% select(-matches("*(B365|BW|IW|LB|PS|WH|SJ|VC|GB|BS)(A|D
 #######################
 #Imputations
 #######################
-
-#######################
-#Approach #1: mice approach, should check which is the best method, seed and m and maxit
-#######################
-miceOutput <- matchData
-miceImputation <- mice(matchData[7:36],m=5,maxit=5,meth='pmm',seed=500)
-
-#Values obtained of the imputations:
-summary(miceImputation)
-
-miceImputation$imp$PSH
-
-miceOutput[7:36] <- mice::complete(miceImputation, 1)
-miceOutput
-densityplot(miceImputation)
-stripplot(miceImputation)
-saveRDS(miceOutput, "./rds/miceOutput-noOverround.rds")
-readRDS("./rds/miceOutput-noOverround.rds")
-#######################
-#Approach #2: KNN imputation. should check the K
-#######################
-knnImputedData <- matchData
-start.time <- Sys.time()
-knnImputedData[7:36] <- knnImputation(data = matchData[7:36], k = 5, scale = T, meth="weighAvg")
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-summary(knnImputedData)
-saveRDS(knnImputedData, "./rds/knnImputedData-noOverround.rds")
-readRDS("./rds/knnImputedData-noOverround.rds")
-#######################
-#Approach #3: Random Forest imputation.
-#######################
-#start.time <- Sys.time()
-#randomImputation <- matchData
-#randomForestImputed <- missForest(matchData[7:36])$ximp #takes way too much wtf
-#randomImputation[7:36] <- randomForestImputed
-#end.time <- Sys.time()
-#time.taken2 <- end.time - start.time
-#time.taken2
-#saveRDS(randomImputation, "randomImputation.rds")
-#######################
-#Approach #4: imputePCA. should check the ncp
-#######################
-pcaOutput <- matchData
-start.time <- Sys.time()
-pcaImputed <- imputePCA(matchData[7:36], ncp=4)
-pcaOutput[7:36] <- as.data.frame(pcaImputed$completeObs)
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-print(time.taken)
-saveRDS(pcaOutput, "./rds/pcaOutput-noOverround.rds")
-readRDS("./rds/pcaOutput-noOverround.rds")
+for(i in 2:10){
+  #######################
+  #Approach #1: mice approach, should check which is the best method, seed and m and maxit
+  #######################
+  miceOutput <- matchData
+  start.time <- Sys.time()
+  miceImputation <- mice(matchData[7:36],m=i,maxit=5,meth='pmm',seed=500)
+  end.time <- Sys.time()
+  time.taken <- end.time - start.time
+  print(paste0("Mice iteration ", i, " takes ", print(time.taken)))
+  #Values obtained of the imputations:
+  #summary(miceImputation)
+  #miceImputation$imp$PSH
+  miceOutput[7:36] <- mice::complete(miceImputation, 1)
+  #miceOutput
+  #densityplot(miceImputation)
+  #stripplot(miceImputation)
+  saveRDS(miceOutput, paste0("./rds/miceOutput",i,"-noOverround.rds"))
+  #readRDS("./rds/miceOutput-noOverround.rds")
+  #######################
+  #Approach #2: KNN imputation. should check the K
+  #######################
+  knnImputedData <- matchData
+  start.time <- Sys.time()
+  knnImputedData[7:36] <- knnImputation(data = matchData[7:36], k = i, scale = T, meth="weighAvg")
+  end.time <- Sys.time()
+  time.taken <- end.time - start.time
+  print(paste0("KNN iteration ", i, " takes ", print(time.taken)))
+  #summary(knnImputedData)
+  saveRDS(knnImputedData, paste0("./rds/knnImputedData",i,"-noOverround.rds"))
+  #readRDS("./rds/knnImputedData-noOverround.rds")
+  
+  #######################
+  #Approach #4: imputePCA. should check the ncp
+  #######################
+  pcaOutput <- matchData
+  start.time <- Sys.time()
+  pcaImputed <- imputePCA(matchData[7:36], ncp=i)
+  pcaOutput[7:36] <- as.data.frame(pcaImputed$completeObs)
+  end.time <- Sys.time()
+  time.taken <- end.time - start.time
+  print(paste0("PCA iteration ", i, " takes ", print(time.taken)))
+  saveRDS(pcaOutput, paste0("./rds/pcaOutput",i,"-noOverround.rds"))
+  #readRDS("./rds/pcaOutput-noOverround.rds")
+}
 #######################
 #Overround
 #######################
@@ -125,12 +119,12 @@ overroundGen <- function(dataset, bettingHouse){
   return(dataset)
 }
 
-
+library(implied)
 #######################
-# Data Creation
+# Data Creation in case i wanted to see per each case.
 #######################
 #datasets <- list(matchData, miceOutput, knnImputedData, randomForestImputed, pcaImputation)
-datasets <- list(miceOutput, knnImputedData, pcaOutput)
+datasets <- list(matchData)
 counter <- 0
 for(index in datasets){
   counter = counter + 1

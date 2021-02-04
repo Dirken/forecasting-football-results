@@ -20,7 +20,7 @@ bp<- ggplot(data, aes(x="", y=Freq, fill=Var1)) +
   theme(legend.position="bottom")
 bp
 
-fileName <- paste0("missingValues/pie",".jpeg")
+fileName <- paste0("images/missingValues/pie",".jpeg")
 jpeg(file=fileName)
 bp
 dev.off()
@@ -50,7 +50,7 @@ bp<- ggplot(dataLeagues, aes(x="", y=Freq, fill=result)) +
  # work on this later to have the labels but not so important.
  # %>%geom_text(aes(label = Freq, position = position_stack(vjust = 0.5)))
 
-fileName <- paste0("missingValues/multiPie",".jpeg")
+fileName <- paste0("images/missingValues/multiPie",".jpeg")
 jpeg(file=fileName, width = 2000, height = 2000)
 bp #takes a while to do :(
 dev.off()
@@ -215,27 +215,28 @@ ggplot(leagueSummaryMinorLeagues, aes(x=season, y=avg_home_team_scors - avg_away
 #Correlation between home/away
 ##############################################
 #is there a correlation between home form and away form? a good team is always a good team?
-league <- select(league, id, name, country_id) %>% rename(league_id = id, league_name = name)
 team   <- select(team, team_api_id, team_long_name, team_short_name)
 match  <- select(match, league_id, home_team_api_id, away_team_api_id, home_team_goal, away_team_goal)
 
-points <- match %>% 
+matchPoints <- match %>% 
   mutate(home_team_points = if_else((home_team_goal > away_team_goal),3,if_else((home_team_goal == away_team_goal),1,0))) %>%
   mutate(away_team_points = if_else((home_team_goal > away_team_goal),0,if_else((home_team_goal == away_team_goal),1,3))) 
 
-localPoints <- points %>%
+homePoints <- matchPoints %>%
   select(league_id, team_api_id = home_team_api_id, home_team_points) %>%
   group_by(league_id, team_api_id) %>%
   summarize(avgHome = mean(home_team_points))
 
-awayPoints <- points %>%
+awayPoints <- matchPoints %>%
   select(league_id, team_api_id = away_team_api_id, away_team_points) %>%
   group_by(league_id, team_api_id) %>%
   summarize(avgAway = mean(away_team_points))
 
-#what happens here
+points <- left_join(homePoints, awayPoints, by = c("league_id", "team_api_id"))
+
 points <- points %>%
   mutate(avgPointsGame = (avgHome + avgAway)/2)
+
 points <- left_join(points, league, by = "league_id")
 points <- left_join(points, team, by = "team_api_id")
 

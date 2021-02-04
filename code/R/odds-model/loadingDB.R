@@ -14,4 +14,4 @@ team_attrs <- tbl_df(dbGetQuery(con, "SELECT * FROM Team_Attributes"))
 
 tables <- list(league, team, match, players, player_attrs, countries, team_attrs)
 
-
+names(player_attrs)

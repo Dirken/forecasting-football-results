@@ -1,8 +1,8 @@
 load.image("./rds/bettingOdds.RData")
-readRDS("./rds/matchData.rds")
-readRDS("./rds/miceOutput.rds")
-readRDS("./rds/knnImputedData.rds")
-readRDS("./rds/pcaOutput.rds")
+matchData <- readRDS("./rds/matchData.rds")
+miceOutput <- readRDS("./rds/miceOutput.rds")
+knnImputatedData <- readRDS("./rds/knnImputedData.rds")
+pcaOutput <- readRDS("./rds/pcaOutput.rds")
 
 ####################
 #Outliers
@@ -36,6 +36,14 @@ iqrFilter <- function (x){
 }
 
 iqrOutliers <- sapply(matchData[7:36], iqrFilter)
+
+
+
+
+#we are not going to apply outlier detection, instead we are going to do a weighted average because as 
+#it is mentioned in literature, taking the maximum is not worthy. Also non of this values is invented,
+#all are real, therefore we are going to keep them and scale them. Luckily by doing average, they will
+#not do weird thigns.
 
 
 

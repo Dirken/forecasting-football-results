@@ -1,5 +1,5 @@
 load.image("bettingOdds.RData")
-readRDS("matchData.rds")
+matchData <- readRDS("./rds/matchData-noOverround.rds")
 readRDS("miceOutput.rds")
 readRDS("knnImputedData.rds")
 readRDS("pcaOutput.rds")
@@ -43,31 +43,23 @@ pcaData <- miceOutput
 pca.data <- prcomp(pcaData, center = T,scale. = T)
 
 #segurament està així perquè és el invers... però aquí dóna a entendre el contrari.
-ggbiplot(pca.data, group=pcaData$winner, obs.scale = 1, alpha = 0.2, varname.size = 4, varname.abbrev = T) +
   scale_color_manual(name="winner", values=c("red", "green", "blue")) +
   theme(legend.direction ="horizontal", 
         legend.position = "bottom")
 
+matchData$winner <- as.factor(matchData$winner)
+names(matchData)
 
-####################
-#ANOVA
-####################
-data(decathlon, package="FactoMineR")
-#100m
-class(decathlon$`100m`)
-class(decathlon$Competition)
-data = data.frame(x1=miceOutput$stage, x2=miceOutput$season)
-AnovaModel.1 <- aov(x1 ~ x2, data=data)
-summary(AnovaModel.1)
+nullModel <- glm(winner ~ 1, matchData, family="gaussian")
+completeModel<- lm(winner ~ ., matchData)
 
-#Assumptions
-dwtest(AnovaModel.1, alternative ="two.sided")
-shapiro.test(residuals(AnovaModel.1))
-lmtest::bptest(AnovaModel.1)
-# The p value that Anova gives us is less than 0.05, it means that we reject null hypothesis, so these distributions are different.
+forwardModel <- step(nullModel, 
+                     scope = list(upper=completeModel), 
+                     direction="both", criterion = "BIC", 
+                     k=log(nrow(matchData)))
 
-
-#overround model:
-
-#AIC
-#BIC
+backwardModel <- step(completeModel, 
+                      scope = list(lower=nullModel), 
+                      direction="both", 
+                      criterion = "BIC", 
+                      k=log(nrow(matchData)))
